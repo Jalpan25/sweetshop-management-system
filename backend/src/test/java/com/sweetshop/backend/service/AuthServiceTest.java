@@ -31,4 +31,37 @@ public class AuthServiceTest {
         });
         assertTrue(ex.getMessage().toLowerCase().contains("email"));
     }
+    @Test
+    void loginSucceedsWithValidCredentials() {
+        userRepository.deleteAll();
+
+        User u = new User();
+        u.setName("Test");
+        u.setEmail("login@example.com");
+        u.setPassword("secret");
+        authService.register(u);
+
+        User loggedIn = authService.login("login@example.com", "secret");
+
+        assertNotNull(loggedIn);
+        assertEquals("login@example.com", loggedIn.getEmail());
+    }
+
+    @Test
+    void loginFailsWithWrongPassword() {
+        userRepository.deleteAll();
+
+        User u = new User();
+        u.setName("Test");
+        u.setEmail("loginfail@example.com");
+        u.setPassword("rightpass");
+        authService.register(u);
+
+        Exception ex = assertThrows(RuntimeException.class, () -> {
+            authService.login("loginfail@example.com", "wrongpass");
+        });
+
+        assertTrue(ex.getMessage().toLowerCase().contains("invalid"));
+    }
+
 }
