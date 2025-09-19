@@ -1,6 +1,8 @@
 package com.sweetshop.backend.controller;
-// change this to your actual package
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sweetshop.backend.repository.SweetRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,7 +25,17 @@ class SweetControllerIntegrationTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    SweetRepository sweetRepository;
+
+    // DTO for adding sweets
     record AddSweetDto(String name, String category, Double price, Integer quantity) {}
+
+    // Clear the sweets table before each test
+    @BeforeEach
+    void cleanDB() {
+        sweetRepository.deleteAll();
+    }
 
     @Test
     void postSweets_unauthenticated_returns401() throws Exception {
