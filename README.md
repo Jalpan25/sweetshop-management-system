@@ -10,7 +10,7 @@ A full-stack web application for managing a sweet shop's inventory, user authent
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![JUnit](https://img.shields.io/badge/JUnit-25A162?style=for-the-badge&logo=junit5&logoColor=white)
 
-**Live Frontend Application:** [https://incubyte-f.vercel.app/register](https://incubyte-f.vercel.app/register)  
+**Live Frontend Application:** [https://incubyte-f.vercel.app/](https://incubyte-f.vercel.app/)  
 *(Note: Backend is not deployed, so signup and signin will not work)*
 
 ---
@@ -366,7 +366,7 @@ pie title Test Coverage Distribution
 
 <div align="center">
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Frontend_Demo-Click_Here-FF6B6B?style=for-the-badge&logoColor=white)](https://incubyte-f.vercel.app/register)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Frontend_Demo-Click_Here-FF6B6B?style=for-the-badge&logoColor=white)](https://incubyte-f.vercel.app/)
 
 **Live Frontend Application - Click to View Interface**  
 *(Note: Backend is not deployed, so signup and signin will not work)*
