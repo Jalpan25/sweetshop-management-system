@@ -1,4 +1,6 @@
-// 1. Updated SecurityConfig.java (ONLY file you need to change)
+// File: src/main/java/com/sweetshop/backend/config/SecurityConfig.java
+// UPDATED - Add inventory and users endpoints to your existing SecurityConfig
+
 package com.sweetshop.backend.config;
 
 import com.sweetshop.backend.security.JwtAuthenticationFilter;
@@ -41,8 +43,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        // FIXED: Allow authenticated users, role checks in @PreAuthorize
+                        // Sweet management endpoints - role checks in @PreAuthorize
                         .requestMatchers("/api/sweets/**").authenticated()
+                        // Inventory management endpoints - role checks in @PreAuthorize
+                        .requestMatchers("/api/inventory/**").authenticated()
+                        // User management endpoints - role checks in @PreAuthorize
+                        .requestMatchers("/api/users/**").authenticated()
                         .anyRequest().authenticated()
                 );
 
@@ -54,7 +60,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
-        // FIXED: Add both ports
+        // Add both common development ports
         cors.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173"));
         cors.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cors.setAllowedHeaders(Arrays.asList("*"));
