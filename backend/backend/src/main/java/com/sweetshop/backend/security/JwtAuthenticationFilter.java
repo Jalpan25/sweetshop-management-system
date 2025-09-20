@@ -1,11 +1,9 @@
-// Updated JwtAuthenticationFilter.java - REPLACE your current filter
 package com.sweetshop.backend.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -45,32 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            try {
-                UserDetails ud = userDetailsService.loadUserByUsername(username);
-
-                // FIXED: Get roles from token and create authorities
-                List<String> tokenRoles = jwtUtil.getRolesFromToken(token);
-                List<SimpleGrantedAuthority> authorities;
-
-                if (tokenRoles != null && !tokenRoles.isEmpty()) {
-                    // Use roles from token
-                    authorities = tokenRoles.stream()
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
-                } else {
-                    // Fallback to UserDetails authorities
-                    authorities = ud.getAuthorities().stream()
-                            .map(auth -> new SimpleGrantedAuthority(auth.getAuthority()))
-                            .collect(Collectors.toList());
-                }
-
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        ud, null, authorities);
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (Exception e) {
-                logger.error("Error setting authentication context", e);
-            }
+            UserDetails ud = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ud, null, ud.getAuthorities());
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
         filterChain.doFilter(request, response);

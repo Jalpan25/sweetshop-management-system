@@ -1,4 +1,3 @@
-// 1. Updated SecurityConfig.java (ONLY file you need to change)
 package com.sweetshop.backend.config;
 
 import com.sweetshop.backend.security.JwtAuthenticationFilter;
@@ -11,16 +10,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // ✅ correct import
 
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true) // Enable @PreAuthorize
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
@@ -36,14 +33,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> {}) // Enable CORS
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // FIXED: Allow authenticated users, role checks in @PreAuthorize
-                        .requestMatchers("/api/sweets/**").authenticated()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()          // Public endpoints
+                        .requestMatchers("/api/sweets/**").hasRole("ADMIN")   // Only ADMIN can create/update/delete sweets
+                        .anyRequest().authenticated()                         // All other endpoints require authentication
                 );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -51,11 +47,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
-        // FIXED: Add both ports
-        cors.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173"));
+        cors.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // React frontend
         cors.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cors.setAllowedHeaders(Arrays.asList("*"));
         cors.setAllowCredentials(true);

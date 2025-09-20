@@ -1,4 +1,3 @@
-// Fixed AuthController.java - REPLACE your current controller
 package com.sweetshop.backend.controller;
 
 import com.sweetshop.backend.dto.JwtResponse;
@@ -6,11 +5,7 @@ import com.sweetshop.backend.entity.User;
 import com.sweetshop.backend.security.JwtUtil;
 import com.sweetshop.backend.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,17 +28,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         User loggedIn = authService.login(user.getEmail(), user.getPassword());
-
-        // FIXED: Create UserDetails with proper authorities to include roles in JWT
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(loggedIn.getEmail())
-                .password(loggedIn.getPassword())
-                .authorities(Collections.singletonList(new SimpleGrantedAuthority(loggedIn.getRole())))
-                .build();
-
-        // FIXED: Use the new generateToken method that includes roles
-        String token = jwtUtil.generateToken(userDetails);
-
+        String token = jwtUtil.generateToken(loggedIn.getEmail());
         JwtResponse resp = new JwtResponse(token, loggedIn.getId(), loggedIn.getEmail(), loggedIn.getName(), loggedIn.getRole());
         return ResponseEntity.ok(resp);
     }

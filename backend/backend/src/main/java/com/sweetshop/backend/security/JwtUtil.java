@@ -1,17 +1,12 @@
-// Updated JwtUtil.java - REPLACE your current JwtUtil.java
 package com.sweetshop.backend.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -26,26 +21,6 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
-    // FIXED: Generate token with roles
-    public String generateToken(UserDetails userDetails) {
-        Date now = new Date();
-        Date exp = new Date(now.getTime() + jwtExpirationMs);
-
-        // Extract roles from UserDetails
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(now)
-                .setExpiration(exp)
-                .claim("authorities", roles) // Add roles to token
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    // Keep the old method for backward compatibility
     public String generateToken(String username) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + jwtExpirationMs);
@@ -64,18 +39,6 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
-    }
-
-    // FIXED: Extract roles from token
-    @SuppressWarnings("unchecked")
-    public List<String> getRolesFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return (List<String>) claims.get("authorities");
     }
 
     public boolean validateToken(String token) {
