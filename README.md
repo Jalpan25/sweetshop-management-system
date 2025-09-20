@@ -42,7 +42,6 @@ The **Sweet Shop Management System** is a comprehensive solution for managing sw
 
 <div align="center">
 
-![Rainbow Divider](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/colorful.png)
 
 </div>
 
