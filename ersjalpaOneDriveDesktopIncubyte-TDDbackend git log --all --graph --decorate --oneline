@@ -1,0 +1,23 @@
+*   [33m4dceadd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Merge branch 'feat/sweets-crud'
+[31m|[m[32m\[m  
+[31m|[m * [33m5484b8c[m[33m ([m[1;32mfeat/sweets-crud[m[33m)[m RED 🧪 test(sweets): add integration tests for POST /api/sweets
+* [32m|[m [33m650342e[m[33m ([m[1;32mfeat/jwt-auth[m[33m)[m 🔗 feat(frontend-auth): integrate backend register/login APIs with React pages
+* [32m|[m [33mf019ed0[m 🎨 feat(frontend): setup React + Vite + Tailwind CSS boilerplate
+* [32m|[m [33m039e36f[m 🌐 fix(cors): enable React frontend (http://localhost:5173) to call backend APIs
+* [32m|[m [33m5d15f9c[m feat(auth): fix JWT authentication & integration tests, verified login flow on Postman
+* [32m|[m [33m850e7e5[m chore(config): add jwt.secret and jwt.expiration to application.properties
+* [32m|[m [33mf019753[m feat(users): add /api/users/me protected endpoint for current user info
+* [32m|[m [33m3511dee[m feat(auth): return JWT on successful login
+* [32m|[m [33mdf40b16[m feat(security): configure stateless JWT authentication and register JwtAuthenticationFilter
+* [32m|[m [33m7203562[m feat(auth): add JwtUtil, CustomUserDetails, UserDetailsService, JwtAuthenticationFilter (GREEN)
+* [32m|[m [33mbf21a61[m test(auth): add JWT integration tests (RED) - login returns token and protected endpoint checks
+* [32m|[m [33md37f3fc[m chore(deps): add jjwt dependencies for JWT support
+* [32m|[m [33m9768b7f[m[33m ([m[1;32mfeature/auth-login[m[33m)[m Green: make registerThenLogin test pass by implementing password encoding
+* [32m|[m [33me9f1f2d[m feat(auth): add AuthController with register/login endpoints and integration tests
+* [32m|[m [33mcc03550[m feat: implement login to satisfy tests (GREEN stage)
+* [32m|[m [33m6c47c5b[m test: add login tests (failing, RED stage)
+[32m|[m[32m/[m  
+* [33mcf1e1d8[m[33m ([m[1;31morigin/main[m[33m)[m chore: initial setup with AuthService test
+* [33m6eced72[m chore: add User entity and UserRepository
+* [33me3bdd93[m chore: initial project setup with frontend (React+Vite) and backend (Spring Boot + MySQL)
+* [33md91edba[m[33m ([m[1;31morigin/master[m[33m)[m first commit
