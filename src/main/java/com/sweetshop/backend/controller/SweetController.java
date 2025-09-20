@@ -4,12 +4,15 @@ import com.sweetshop.backend.dto.SweetRequest;
 import com.sweetshop.backend.entity.Sweet;
 import com.sweetshop.backend.service.SweetService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sweets")
@@ -21,62 +24,76 @@ public class SweetController {
         this.sweetService = sweetService;
     }
 
-    // POST: Add sweet (ADMIN only)
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Sweet> addSweet(@Valid @RequestBody SweetRequest request) {
-        Sweet sweet = sweetService.addSweet(request);
-        return ResponseEntity.status(201).body(sweet);
+    public ResponseEntity<?> addSweet(@Valid @RequestBody SweetRequest request) {
+        // Remove manual BindingResult handling - let GlobalExceptionHandler handle validation errors
+        try {
+            Sweet sweet = sweetService.addSweet(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(sweet);
+        } catch (RuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 
-    // GET: All sweets with optional filters (authenticated users)
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<Sweet>> getAllSweets(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice
-    ) {
-        List<Sweet> sweets;
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+
         if (name != null || category != null || minPrice != null || maxPrice != null) {
-            BigDecimal min = minPrice != null ? BigDecimal.valueOf(minPrice) : null;
-            BigDecimal max = maxPrice != null ? BigDecimal.valueOf(maxPrice) : null;
-            sweets = sweetService.searchSweets(name, category, min, max);
-        } else {
-            sweets = sweetService.getAllSweets();
+            List<Sweet> sweets = sweetService.searchSweets(name, category, minPrice, maxPrice);
+            return ResponseEntity.ok(sweets);
         }
-        return ResponseEntity.ok(sweets);
+
+        return ResponseEntity.ok(sweetService.getAllSweets());
     }
 
-    // GET: Search sweets (kept for backward compatibility)
     @GetMapping("/search")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<Sweet>> searchSweets(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice
-    ) {
-        BigDecimal min = minPrice != null ? BigDecimal.valueOf(minPrice) : null;
-        BigDecimal max = maxPrice != null ? BigDecimal.valueOf(maxPrice) : null;
-        List<Sweet> sweets = sweetService.searchSweets(name, category, min, max);
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+
+        List<Sweet> sweets = sweetService.searchSweets(name, category, minPrice, maxPrice);
         return ResponseEntity.ok(sweets);
     }
 
-    // PUT: Update sweet details (ADMIN only)
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Sweet> updateSweet(@PathVariable Long id, @Valid @RequestBody SweetRequest request) {
-        Sweet updatedSweet = sweetService.updateSweet(id, request);
-        return ResponseEntity.ok(updatedSweet);
+    public ResponseEntity<?> updateSweet(@PathVariable Long id, @Valid @RequestBody SweetRequest request) {
+        // Remove manual BindingResult handling - let GlobalExceptionHandler handle validation errors
+        try {
+            Sweet sweet = sweetService.updateSweet(id, request);
+            return ResponseEntity.ok(sweet);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.notFound().build();
+            }
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 
-    // DELETE: Delete sweet (ADMIN only)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSweet(@PathVariable Long id) {
-        sweetService.deleteSweet(id);
-        return ResponseEntity.noContent().build();
+        try {
+            sweetService.deleteSweet(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("not found")) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
