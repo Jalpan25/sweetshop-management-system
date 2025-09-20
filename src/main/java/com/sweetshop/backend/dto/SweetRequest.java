@@ -1,48 +1,46 @@
 package com.sweetshop.backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+
 public class SweetRequest {
 
+    @NotBlank(message = "Name is required and cannot be empty")
     private String name;
+
+    @NotBlank(message = "Category is required and cannot be empty")
     private String category;
-    private double price;
-    private int quantity;
 
-    public SweetRequest() {
-    }
+    @NotNull(message = "Price is required")
+    @Positive(message = "Price must be positive")
+    private Double price;
 
-    public SweetRequest(String name, String category, double price, int quantity) {
+    @NotNull(message = "Quantity is required")
+    @PositiveOrZero(message = "Quantity must be zero or positive")
+    private Integer quantity;
+
+    // Constructors
+    public SweetRequest() {}
+
+    public SweetRequest(String name, String category, Double price, Integer quantity) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.quantity = quantity;
     }
 
-    // Getters & Setters
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
+    // Getters and Setters
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getCategory() {
-        return category;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public double getPrice() {
-        return price;
-    }
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 
-    public int getQuantity() {
-        return quantity;
-    }
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 }
