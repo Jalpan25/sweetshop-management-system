@@ -558,7 +558,7 @@ Co-authored-by: ChatGPT <AI@users.noreply.github.com>"
 
 <div align="center">
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** 
 
 **Freedom to use, modify, and distribute** ✨
 
